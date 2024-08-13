@@ -4,9 +4,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 
 
-<mapper namespace="com.atguigu.daijia.driver.mapper.DriverAccountMapper">
+<mapper namespace="com.vocmi.daijia.driver.mapper.DriverAccountMapper">
 
-	<resultMap id="userAccountMap" type="com.atguigu.daijia.model.entity.driver.DriverAccount" autoMapping="true">
+	<resultMap id="userAccountMap" type="com.vocmi.daijia.model.entity.driver.DriverAccount" autoMapping="true">
 	</resultMap>
 
 	<!-- 用于select查询公用抽取的列 -->

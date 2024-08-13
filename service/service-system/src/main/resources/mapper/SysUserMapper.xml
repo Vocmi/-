@@ -4,9 +4,9 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
 
 
-<mapper namespace="com.atguigu.daijia.system.mapper.SysUserMapper">
+<mapper namespace="com.vocmi.daijia.system.mapper.SysUserMapper">
 
-    <resultMap id="SysUserMap" type="com.atguigu.daijia.model.entity.system.SysUser">
+    <resultMap id="SysUserMap" type="com.vocmi.daijia.model.entity.system.SysUser">
         <result property="id" column="id"/>
         <result property="username" column="username"/>
         <result property="password" column="password"/>
@@ -22,7 +22,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
         <result property="isDeleted" column="is_deleted"/>
         <result property="postName" column="post_name"/>
         <result property="deptName" column="dept_name"/>
-        <collection property="roleList" ofType="com.atguigu.daijia.model.entity.system.SysRole">
+        <collection property="roleList" ofType="com.vocmi.daijia.model.entity.system.SysRole">
             <result property="id" column="role_id"/>
             <result property="roleName" column="role_name"/>
             <result property="roleCode" column="role_code"/>
