@@ -1,6 +1,6 @@
 package com.vocmi.daijia.system.service.impl;
 
-import com.vocmi.daijia.common.execption.GuiguException;
+import com.vocmi.daijia.common.execption.VocmiException;
 import com.vocmi.daijia.common.result.ResultCodeEnum;
 import com.vocmi.daijia.model.entity.system.SysDept;
 import com.vocmi.daijia.system.helper.DeptHelper;
@@ -47,7 +47,7 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDept> impl
     public boolean removeById(Serializable id) {
         long count = this.count(new LambdaQueryWrapper<SysDept>().eq(SysDept::getParentId, id));
         if(count > 0) {
-            throw new GuiguException(ResultCodeEnum.NODE_ERROR);
+            throw new VocmiException(ResultCodeEnum.NODE_ERROR);
         }
         sysDeptMapper.deleteById(id);
         return false;

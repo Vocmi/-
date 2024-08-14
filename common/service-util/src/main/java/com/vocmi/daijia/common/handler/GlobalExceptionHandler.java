@@ -1,6 +1,7 @@
 package com.vocmi.daijia.common.handler;
 
-import com.vocmi.daijia.common.execption.GuiguException;
+
+import com.vocmi.daijia.common.execption.VocmiException;
 import com.vocmi.daijia.common.result.Result;
 import com.vocmi.daijia.common.result.ResultCodeEnum;
 import feign.codec.DecodeException;
@@ -38,9 +39,9 @@ public class GlobalExceptionHandler {
      * @param e
      * @return
      */
-    @ExceptionHandler(GuiguException.class)
+    @ExceptionHandler(VocmiException.class)
     @ResponseBody
-    public Result error(GuiguException e){
+    public Result error(VocmiException e){
         e.printStackTrace();
         return Result.build(null,e.getCode(), e.getMessage());
     }

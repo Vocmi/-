@@ -1,6 +1,6 @@
 package com.vocmi.daijia.system.service.impl;
 
-import com.vocmi.daijia.common.execption.GuiguException;
+import com.vocmi.daijia.common.execption.VocmiException;
 import com.vocmi.daijia.common.result.ResultCodeEnum;
 import com.vocmi.daijia.model.entity.system.SysMenu;
 import com.vocmi.daijia.model.entity.system.SysRoleMenu;
@@ -48,7 +48,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     public boolean removeById(Serializable id) {
         long count = this.count(new LambdaQueryWrapper<SysMenu>().eq(SysMenu::getParentId, id));
         if (count > 0) {
-            throw new GuiguException(ResultCodeEnum.NODE_ERROR);
+            throw new VocmiException(ResultCodeEnum.NODE_ERROR);
         }
         sysMenuMapper.deleteById(id);
         return false;

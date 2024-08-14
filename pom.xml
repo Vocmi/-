@@ -48,11 +48,21 @@
         <!-- https://seata.io/zh-cn/docs/overview/what-is-seata.html -->
         <seata.version>1.7.1</seata.version>
         <drools.version>8.41.0.Final</drools.version>
+
+        <hutool.version>5.8.29</hutool.version>
     </properties>
 
     <!--配置dependencyManagement锁定依赖的版本-->
     <dependencyManagement>
         <dependencies>
+
+            <!--糊涂工具包-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
