@@ -3,6 +3,9 @@ package com.vocmi.daijia.driver.service.impl;
 import com.vocmi.daijia.common.constant.RedisConstant;
 import com.vocmi.daijia.driver.client.DriverInfoFeignClient;
 import com.vocmi.daijia.driver.service.DriverService;
+import com.vocmi.daijia.model.form.driver.DriverFaceModelForm;
+import com.vocmi.daijia.model.form.driver.UpdateDriverAuthInfoForm;
+import com.vocmi.daijia.model.vo.driver.DriverAuthInfoVo;
 import com.vocmi.daijia.model.vo.driver.DriverLoginVo;
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
@@ -38,5 +41,20 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverLoginVo getDriverLoginInfo(Long driverId) {
         return driverInfoFeignClient.getDriverLoginInfo(driverId).getData();
+    }
+
+    @Override
+    public Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
+        return driverInfoFeignClient.UpdateDriverAuthInfo(updateDriverAuthInfoForm).getData();
+    }
+
+    @Override
+    public DriverAuthInfoVo getDriverAuthInfo(Long driverId) {
+        return driverInfoFeignClient.getDriverAuthInfo(driverId).getData();
+    }
+
+    @Override
+    public Boolean creatDriverFaceModel(DriverFaceModelForm driverFaceModelForm) {
+        return driverInfoFeignClient.creatDriverFaceModel(driverFaceModelForm).getData();
     }
 }
