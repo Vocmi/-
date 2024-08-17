@@ -2,8 +2,10 @@ package com.vocmi.daijia.customer.controller;
 
 import com.vocmi.daijia.common.login.VocmiLogin;
 import com.vocmi.daijia.common.result.Result;
+import com.vocmi.daijia.common.util.AuthContextHolder;
 import com.vocmi.daijia.customer.service.OrderService;
 import com.vocmi.daijia.model.form.customer.ExpectOrderForm;
+import com.vocmi.daijia.model.form.customer.SubmitOrderForm;
 import com.vocmi.daijia.model.vo.customer.ExpectOrderVo;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +37,14 @@ public class OrderController {
     @PostMapping("/expectOrder")
     public Result<ExpectOrderVo> expectOrder(@RequestBody ExpectOrderForm expectOrderForm) {
         return Result.ok(orderService.expectOrder(expectOrderForm));
+    }
+
+    @Operation(summary = "乘客下单")
+    @VocmiLogin
+    @PostMapping("/submitOrder")
+    public Result<Long> submitOrder(@RequestBody SubmitOrderForm submitOrderForm) {
+        submitOrderForm.setCustomerId(AuthContextHolder.getUserId());
+        return Result.ok(orderService.submitOrder(submitOrderForm));
     }
 }
 
