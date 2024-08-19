@@ -1,6 +1,7 @@
 package com.vocmi.daijia.order.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.vocmi.daijia.common.constant.RedisConstant;
 import com.vocmi.daijia.model.entity.order.OrderInfo;
 import com.vocmi.daijia.model.entity.order.OrderStatusLog;
@@ -42,7 +43,20 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         //记录日志
         this.log(orderInfo.getId(), orderInfo.getStatus());
 
+        //查找附近可以接单的司机
+
+
         return orderInfo.getId();
+    }
+
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        OrderInfo orderInfo = orderInfoMapper.selectOne(queryWrapper.eq(OrderInfo::getId, orderId).select(OrderInfo::getStatus));
+        if (BeanUtil.isEmpty(orderInfo)) {
+            return OrderStatus.NULL_ORDER.getStatus();
+        }
+        return orderInfo.getStatus();
     }
 
     public void log(Long orderId, Integer status) {

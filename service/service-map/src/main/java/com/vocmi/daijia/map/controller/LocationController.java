@@ -1,9 +1,17 @@
 package com.vocmi.daijia.map.controller;
 
+import com.vocmi.daijia.common.result.Result;
+import com.vocmi.daijia.map.service.LocationService;
+import com.vocmi.daijia.model.form.map.SearchNearByDriverForm;
+import com.vocmi.daijia.model.form.map.UpdateDriverLocationForm;
+import com.vocmi.daijia.model.vo.map.NearByDriverVo;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Tag(name = "位置API接口管理")
@@ -11,7 +19,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/map/location")
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class LocationController {
+    @Resource
+    private LocationService locationService;
 
+    @Operation(summary = "开启接单服务：更新司机经纬度位置")
+    @PostMapping("/updateDriverLocation")
+    public Result<Boolean> updateDriverLocation(@RequestBody UpdateDriverLocationForm updateDriverLocationForm) {
+        return Result.ok(locationService.updateDriverLocation(updateDriverLocationForm));
+    }
 
+    @Operation(summary = "关闭接单服务：删除司机经纬度位置")
+    @DeleteMapping("/removeDriverLocation/{driverId}")
+    public Result<Boolean> removeDriverLocation(@PathVariable Long driverId) {
+        return Result.ok(locationService.removeDriverLocation(driverId));
+    }
+
+    @Operation(summary = "搜索附近满足条件的司机")
+    @PostMapping("/searchNearByDriver")
+    public Result<List<NearByDriverVo>> searchNearByDriver(@RequestBody SearchNearByDriverForm searchNearByDriverForm) {
+        return Result.ok(locationService.searchNearByDriver(searchNearByDriverForm));
+    }
 }
 

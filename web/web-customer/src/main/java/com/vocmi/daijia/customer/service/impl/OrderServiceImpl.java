@@ -2,6 +2,7 @@ package com.vocmi.daijia.customer.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.vocmi.daijia.customer.service.OrderService;
+import com.vocmi.daijia.dispatch.client.NewOrderFeignClient;
 import com.vocmi.daijia.map.client.MapFeignClient;
 import com.vocmi.daijia.model.form.customer.ExpectOrderForm;
 import com.vocmi.daijia.model.form.customer.SubmitOrderForm;
@@ -9,7 +10,9 @@ import com.vocmi.daijia.model.form.map.CalculateDrivingLineForm;
 import com.vocmi.daijia.model.form.order.OrderInfoForm;
 import com.vocmi.daijia.model.form.rules.FeeRuleRequestForm;
 import com.vocmi.daijia.model.vo.customer.ExpectOrderVo;
+import com.vocmi.daijia.model.vo.dispatch.NewOrderTaskVo;
 import com.vocmi.daijia.model.vo.map.DrivingLineVo;
+import com.vocmi.daijia.model.vo.order.NewOrderDataVo;
 import com.vocmi.daijia.model.vo.rules.FeeRuleResponseVo;
 import com.vocmi.daijia.order.client.OrderInfoFeignClient;
 import com.vocmi.daijia.rules.client.FeeRuleFeignClient;
@@ -33,6 +36,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private OrderInfoFeignClient orderInfoFeignClient;
+
+    @Resource
+    private NewOrderFeignClient newOrderFeignClient;
 
     @Override
     public ExpectOrderVo expectOrder(ExpectOrderForm expectOrderForm) {
@@ -79,8 +85,17 @@ public class OrderServiceImpl implements OrderService {
         //4.保存订单信息
         Long orderId = orderInfoFeignClient.saveOrderInfo(orderInfoForm).getData();
 
-        //TODO启动任务调度
-
+        //启动任务调度,查询附近可以接单的司机
+        NewOrderTaskVo newOrderTaskVo = BeanUtil.copyProperties(orderInfoForm, NewOrderTaskVo.class);
+        newOrderTaskVo.setOrderId(orderId);
+        newOrderTaskVo.setExpectTime(drivingLineVo.getDuration());
+        newOrderTaskVo.setCreateTime(new Date());
+        newOrderFeignClient.addAndStartTask(newOrderTaskVo);
         return orderId;
+    }
+
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+        return orderInfoFeignClient.getOrderStatus(orderId).getData();
     }
 }
