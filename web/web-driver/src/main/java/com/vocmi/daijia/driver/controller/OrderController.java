@@ -7,6 +7,7 @@ import com.vocmi.daijia.driver.service.DriverService;
 import com.vocmi.daijia.driver.service.OrderService;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.vocmi.daijia.model.vo.order.NewOrderDataVo;
+import com.vocmi.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -46,13 +47,36 @@ public class OrderController {
         return Result.ok(orderService.findNewOrderQueueData(driverId));
     }
 
-    @Operation(summary = "查找司机端当前订单")
+    @Operation(summary = "司机抢单")
+    @VocmiLogin
+    @GetMapping("/robNewOrder/{orderId}")
+    public Result<Boolean> robNewOrder(@PathVariable Long orderId) {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.robNewOrder(driverId, orderId));
+    }
+
+    @Operation(summary = "乘客端查找当前订单")
+    @VocmiLogin
+    @GetMapping("/searchCustomerCurrentOrder")
+    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.searchCustomerCurrentOrder(customerId));
+    }
+
+    @Operation(summary = "司机端查找当前订单")
     @VocmiLogin
     @GetMapping("/searchDriverCurrentOrder")
     public Result<CurrentOrderInfoVo> searchDriverCurrentOrder() {
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
-        return Result.ok(currentOrderInfoVo);
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.searchDriverCurrentOrder(driverId));
+    }
+
+    @Operation(summary = "获取订单账单详细信息")
+    @VocmiLogin
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(orderId, driverId));
     }
 }
 

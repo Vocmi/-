@@ -8,6 +8,7 @@ import com.vocmi.daijia.model.form.customer.ExpectOrderForm;
 import com.vocmi.daijia.model.form.customer.SubmitOrderForm;
 import com.vocmi.daijia.model.vo.customer.ExpectOrderVo;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.vocmi.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -52,6 +53,14 @@ public class OrderController {
     @GetMapping("/getOrderStatus/{orderId}")
     public Result<Integer> getOrderStatus(@PathVariable Long orderId) {
         return Result.ok(orderService.getOrderStatus(orderId));
+    }
+
+    @Operation(summary = "获取订单信息")
+    @VocmiLogin
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(orderId, customerId));
     }
 }
 

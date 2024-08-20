@@ -1,9 +1,12 @@
 package com.vocmi.daijia.customer.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.vocmi.daijia.common.execption.VocmiException;
+import com.vocmi.daijia.common.result.ResultCodeEnum;
 import com.vocmi.daijia.customer.service.OrderService;
 import com.vocmi.daijia.dispatch.client.NewOrderFeignClient;
 import com.vocmi.daijia.map.client.MapFeignClient;
+import com.vocmi.daijia.model.entity.order.OrderInfo;
 import com.vocmi.daijia.model.form.customer.ExpectOrderForm;
 import com.vocmi.daijia.model.form.customer.SubmitOrderForm;
 import com.vocmi.daijia.model.form.map.CalculateDrivingLineForm;
@@ -13,6 +16,7 @@ import com.vocmi.daijia.model.vo.customer.ExpectOrderVo;
 import com.vocmi.daijia.model.vo.dispatch.NewOrderTaskVo;
 import com.vocmi.daijia.model.vo.map.DrivingLineVo;
 import com.vocmi.daijia.model.vo.order.NewOrderDataVo;
+import com.vocmi.daijia.model.vo.order.OrderInfoVo;
 import com.vocmi.daijia.model.vo.rules.FeeRuleResponseVo;
 import com.vocmi.daijia.order.client.OrderInfoFeignClient;
 import com.vocmi.daijia.rules.client.FeeRuleFeignClient;
@@ -97,5 +101,20 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Integer getOrderStatus(Long orderId) {
         return orderInfoFeignClient.getOrderStatus(orderId).getData();
+    }
+
+    @Override
+    public OrderInfoVo getOrderInfo(Long orderId, Long customerId) {
+        //订单信息
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        if (orderInfo.getCustomerId().longValue() != customerId.longValue()) {
+            throw new VocmiException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+
+        //封装订单信息
+        OrderInfoVo orderInfoVo = new OrderInfoVo();
+        orderInfoVo.setOrderId(orderId);
+        BeanUtils.copyProperties(orderInfo, orderInfoVo);
+        return orderInfoVo;
     }
 }
