@@ -3,7 +3,9 @@ package com.vocmi.daijia.driver.controller;
 import com.vocmi.daijia.common.login.VocmiLogin;
 import com.vocmi.daijia.common.result.Result;
 import com.vocmi.daijia.common.util.AuthContextHolder;
+import com.vocmi.daijia.driver.service.DriverService;
 import com.vocmi.daijia.driver.service.OrderService;
+import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.vocmi.daijia.model.vo.order.NewOrderDataVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,6 +28,9 @@ public class OrderController {
     @Resource
     private OrderService orderService;
 
+    @Resource
+    private DriverService driverService;
+
     @Operation(summary = "查询订单状态")
     @VocmiLogin
     @GetMapping("/getOrderStatus/{orderId}")
@@ -39,6 +44,15 @@ public class OrderController {
     public Result<List<NewOrderDataVo>> findNewOrderQueueData() {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.findNewOrderQueueData(driverId));
+    }
+
+    @Operation(summary = "查找司机端当前订单")
+    @VocmiLogin
+    @GetMapping("/searchDriverCurrentOrder")
+    public Result<CurrentOrderInfoVo> searchDriverCurrentOrder() {
+        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
+        currentOrderInfoVo.setIsHasCurrentOrder(false);
+        return Result.ok(currentOrderInfoVo);
     }
 }
 
