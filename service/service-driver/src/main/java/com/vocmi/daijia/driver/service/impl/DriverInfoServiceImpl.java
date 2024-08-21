@@ -23,12 +23,14 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.vocmi.daijia.model.form.driver.DriverFaceModelForm;
 import com.vocmi.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import com.vocmi.daijia.model.vo.driver.DriverAuthInfoVo;
+import com.vocmi.daijia.model.vo.driver.DriverInfoVo;
 import com.vocmi.daijia.model.vo.driver.DriverLoginVo;
 import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.joda.time.DateTime;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -247,6 +249,17 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         driverSet.setServiceStatus(status);
         driverSetMapper.update(driverSet, queryWrapper);
         return true;
+    }
+
+    @Override
+    public DriverInfoVo getDriverInfo(Long driverId) {
+        DriverInfo driverInfo = this.getById(driverId);
+        DriverInfoVo driverInfoVo = new DriverInfoVo();
+        BeanUtils.copyProperties(driverInfo, driverInfoVo);
+        //驾龄
+        Integer driverLicenseAge = new DateTime().getYear() - new DateTime(driverInfo.getDriverLicenseIssueDate()).getYear() + 1;
+        driverInfoVo.setDriverLicenseAge(driverLicenseAge);
+        return driverInfoVo;
     }
 
     /**

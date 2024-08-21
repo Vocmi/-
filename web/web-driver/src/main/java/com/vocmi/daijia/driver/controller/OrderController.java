@@ -5,6 +5,10 @@ import com.vocmi.daijia.common.result.Result;
 import com.vocmi.daijia.common.util.AuthContextHolder;
 import com.vocmi.daijia.driver.service.DriverService;
 import com.vocmi.daijia.driver.service.OrderService;
+import com.vocmi.daijia.model.form.map.CalculateDrivingLineForm;
+import com.vocmi.daijia.model.form.order.UpdateOrderCartForm;
+import com.vocmi.daijia.model.vo.driver.DriverInfoVo;
+import com.vocmi.daijia.model.vo.map.DrivingLineVo;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.vocmi.daijia.model.vo.order.NewOrderDataVo;
 import com.vocmi.daijia.model.vo.order.OrderInfoVo;
@@ -12,10 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -77,6 +78,30 @@ public class OrderController {
     public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.getOrderInfo(orderId, driverId));
+    }
+
+    @Operation(summary = "计算最佳驾驶线路")
+    @VocmiLogin
+    @PostMapping("/calculateDrivingLine")
+    public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm) {
+        return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
+    }
+
+    @Operation(summary = "司机到达代驾起始地点")
+    @VocmiLogin
+    @GetMapping("/driverArriveStartLocation/{orderId}")
+    public Result<Boolean> driverArriveStartLocation(@PathVariable Long orderId) {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.driverArriveStartLocation(orderId, driverId));
+    }
+
+    @Operation(summary = "更新代驾车辆信息")
+    @VocmiLogin
+    @PostMapping("/updateOrderCart")
+    public Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm) {
+        Long driverId = AuthContextHolder.getUserId();
+        updateOrderCartForm.setDriverId(driverId);
+        return Result.ok(orderService.updateOrderCart(updateOrderCartForm));
     }
 }
 

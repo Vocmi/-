@@ -14,5 +14,14 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("file")
 public class FileController {
+    @Resource
+    private CosService cosService;
 
+    @Operation(summary = "上传")
+//    @VocmiLogin
+    @PostMapping("/upload")
+    public Result<String> upload(@RequestPart("file") MultipartFile file, @RequestParam(name = "path", defaultValue = "auth") String path) {
+        CosUploadVo upload = cosService.upload(file, path);
+        return Result.ok(upload.getShowUrl());
+    }
 }

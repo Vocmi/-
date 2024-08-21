@@ -7,6 +7,7 @@ import com.vocmi.daijia.driver.service.LocationService;
 import com.vocmi.daijia.map.client.LocationFeignClient;
 import com.vocmi.daijia.model.entity.driver.DriverSet;
 import com.vocmi.daijia.model.form.map.UpdateDriverLocationForm;
+import com.vocmi.daijia.model.form.map.UpdateOrderLocationForm;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,5 +32,10 @@ public class LocationServiceImpl implements LocationService {
         } else {
             throw new VocmiException(ResultCodeEnum.NO_START_SERVICE);
         }
+    }
+
+    @Override
+    public Object updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm) {
+        return locationFeignClient.updateOrderLocationToCache(updateOrderLocationForm).getData();
     }
 }

@@ -5,6 +5,7 @@ import com.vocmi.daijia.common.result.Result;
 import com.vocmi.daijia.common.util.AuthContextHolder;
 import com.vocmi.daijia.driver.service.LocationService;
 import com.vocmi.daijia.model.form.map.UpdateDriverLocationForm;
+import com.vocmi.daijia.model.form.map.UpdateOrderLocationForm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -31,6 +32,13 @@ public class LocationController {
         Long driverId = AuthContextHolder.getUserId();
         updateDriverLocationForm.setDriverId(driverId);
         return Result.ok(locationService.updateDriverLocation(updateDriverLocationForm));
+    }
+
+    @Operation(summary = "司机赶往代驾起始点：更新订单位置到Redis缓存")
+    @VocmiLogin
+    @PostMapping("/updateOrderLocationToCache")
+    public Result updateOrderLocationToCache(@RequestBody UpdateOrderLocationForm updateOrderLocationForm) {
+        return Result.ok(locationService.updateOrderLocationToCache(updateOrderLocationForm));
     }
 }
 

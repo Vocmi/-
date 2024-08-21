@@ -3,6 +3,7 @@ package com.vocmi.daijia.order.client;
 import com.vocmi.daijia.common.result.Result;
 import com.vocmi.daijia.model.entity.order.OrderInfo;
 import com.vocmi.daijia.model.form.order.OrderInfoForm;
+import com.vocmi.daijia.model.form.order.UpdateOrderCartForm;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,4 +61,21 @@ public interface OrderInfoFeignClient {
      */
     @GetMapping("/order/info/getOrderInfo/{orderId}")
     Result<OrderInfo> getOrderInfo(@PathVariable("orderId") Long orderId);
+
+    /**
+     * 司机到达起始点
+     * @param orderId
+     * @param driverId
+     * @return
+     */
+    @GetMapping("/order/info/driverArriveStartLocation/{orderId}/{driverId}")
+    Result<Boolean> driverArriveStartLocation(@PathVariable("orderId") Long orderId, @PathVariable("driverId") Long driverId);
+
+    /**
+     * 更新代驾车辆信息
+     * @param updateOrderCartForm
+     * @return
+     */
+    @PostMapping("/order/info//updateOrderCart")
+    Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm);
 }

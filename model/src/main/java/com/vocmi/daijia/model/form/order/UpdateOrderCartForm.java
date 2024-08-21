@@ -35,5 +35,4 @@ public class UpdateOrderCartForm {
     @Schema(description = "司机到达拍照：车后照")
     @TableField("car_back_url")
     private String carBackUrl;
-
 }

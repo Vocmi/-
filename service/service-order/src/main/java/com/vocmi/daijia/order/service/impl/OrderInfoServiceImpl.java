@@ -9,6 +9,7 @@ import com.vocmi.daijia.model.entity.order.OrderInfo;
 import com.vocmi.daijia.model.entity.order.OrderStatusLog;
 import com.vocmi.daijia.model.enums.OrderStatus;
 import com.vocmi.daijia.model.form.order.OrderInfoForm;
+import com.vocmi.daijia.model.form.order.UpdateOrderCartForm;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.vocmi.daijia.order.mapper.OrderInfoMapper;
 import com.vocmi.daijia.order.mapper.OrderStatusLogMapper;
@@ -17,6 +18,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -182,6 +184,48 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             currentOrderInfoVo.setIsHasCurrentOrder(false);
         }
         return currentOrderInfoVo;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean driverArriveStartLocation(Long orderId, Long driverId) {
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, orderId);
+        queryWrapper.eq(OrderInfo::getDriverId, driverId);
+
+        OrderInfo updateOrderInfo = new OrderInfo();
+        updateOrderInfo.setStatus(OrderStatus.DRIVER_ARRIVED.getStatus());
+        updateOrderInfo.setArriveTime(new Date());
+        //只能更新自己的订单
+        int row = orderInfoMapper.update(updateOrderInfo, queryWrapper);
+        if(row == 1) {
+            //记录日志
+            this.log(orderId, OrderStatus.DRIVER_ARRIVED.getStatus());
+        } else {
+            throw new VocmiException(ResultCodeEnum.UPDATE_ERROR);
+        }
+        return true;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm) {
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, updateOrderCartForm.getOrderId());
+        queryWrapper.eq(OrderInfo::getDriverId, updateOrderCartForm.getDriverId());
+
+        OrderInfo updateOrderInfo = new OrderInfo();
+        BeanUtils.copyProperties(updateOrderCartForm, updateOrderInfo);
+        updateOrderInfo.setStatus(OrderStatus.UPDATE_CART_INFO.getStatus());
+        //只能更新自己的订单
+        int row = orderInfoMapper.update(updateOrderInfo, queryWrapper);
+        if(row == 1) {
+            //记录日志
+            this.log(updateOrderCartForm.getOrderId(), OrderStatus.UPDATE_CART_INFO.getStatus());
+        } else {
+            throw new VocmiException(ResultCodeEnum.UPDATE_ERROR);
+        }
+        return true;
     }
 
     public void log(Long orderId, Integer status) {

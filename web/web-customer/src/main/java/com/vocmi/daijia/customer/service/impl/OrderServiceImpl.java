@@ -5,6 +5,8 @@ import com.vocmi.daijia.common.execption.VocmiException;
 import com.vocmi.daijia.common.result.ResultCodeEnum;
 import com.vocmi.daijia.customer.service.OrderService;
 import com.vocmi.daijia.dispatch.client.NewOrderFeignClient;
+import com.vocmi.daijia.driver.client.DriverInfoFeignClient;
+import com.vocmi.daijia.map.client.LocationFeignClient;
 import com.vocmi.daijia.map.client.MapFeignClient;
 import com.vocmi.daijia.model.entity.order.OrderInfo;
 import com.vocmi.daijia.model.form.customer.ExpectOrderForm;
@@ -14,7 +16,9 @@ import com.vocmi.daijia.model.form.order.OrderInfoForm;
 import com.vocmi.daijia.model.form.rules.FeeRuleRequestForm;
 import com.vocmi.daijia.model.vo.customer.ExpectOrderVo;
 import com.vocmi.daijia.model.vo.dispatch.NewOrderTaskVo;
+import com.vocmi.daijia.model.vo.driver.DriverInfoVo;
 import com.vocmi.daijia.model.vo.map.DrivingLineVo;
+import com.vocmi.daijia.model.vo.map.OrderLocationVo;
 import com.vocmi.daijia.model.vo.order.NewOrderDataVo;
 import com.vocmi.daijia.model.vo.order.OrderInfoVo;
 import com.vocmi.daijia.model.vo.rules.FeeRuleResponseVo;
@@ -43,6 +47,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private NewOrderFeignClient newOrderFeignClient;
+
+    @Resource
+    private DriverInfoFeignClient driverInfoFeignClient;
+
+    @Resource
+    private LocationFeignClient locationFeignClient;
 
     @Override
     public ExpectOrderVo expectOrder(ExpectOrderForm expectOrderForm) {
@@ -116,5 +126,24 @@ public class OrderServiceImpl implements OrderService {
         orderInfoVo.setOrderId(orderId);
         BeanUtils.copyProperties(orderInfo, orderInfoVo);
         return orderInfoVo;
+    }
+
+    @Override
+    public DriverInfoVo getDriverInfo(Long orderId, Long customerId) {
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        if (orderInfo.getCustomerId().longValue() != customerId.longValue()) {
+            throw new VocmiException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+        return driverInfoFeignClient.getDriverInfo(orderInfo.getDriverId()).getData();
+    }
+
+    @Override
+    public OrderLocationVo getCacheOrderLocation(Long orderId) {
+        return locationFeignClient.getCacheOrderLocation(orderId).getData();
+    }
+
+    @Override
+    public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm) {
+        return mapFeignClient.calculateDrivingLine(calculateDrivingLineForm).getData();
     }
 }

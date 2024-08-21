@@ -6,7 +6,11 @@ import com.vocmi.daijia.common.util.AuthContextHolder;
 import com.vocmi.daijia.customer.service.OrderService;
 import com.vocmi.daijia.model.form.customer.ExpectOrderForm;
 import com.vocmi.daijia.model.form.customer.SubmitOrderForm;
+import com.vocmi.daijia.model.form.map.CalculateDrivingLineForm;
 import com.vocmi.daijia.model.vo.customer.ExpectOrderVo;
+import com.vocmi.daijia.model.vo.driver.DriverInfoVo;
+import com.vocmi.daijia.model.vo.map.DrivingLineVo;
+import com.vocmi.daijia.model.vo.map.OrderLocationVo;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.vocmi.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -61,6 +65,28 @@ public class OrderController {
     public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
         Long customerId = AuthContextHolder.getUserId();
         return Result.ok(orderService.getOrderInfo(orderId, customerId));
+    }
+
+    @Operation(summary = "根据订单id获取司机基本信息")
+    @VocmiLogin
+    @GetMapping("/getDriverInfo/{orderId}")
+    public Result<DriverInfoVo> getDriverInfo(@PathVariable Long orderId) {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getDriverInfo(orderId, customerId));
+    }
+
+    @Operation(summary = "司机赶往代驾起始点：获取订单经纬度位置")
+    @VocmiLogin
+    @GetMapping("/getCacheOrderLocation/{orderId}")
+    public Result<OrderLocationVo> getOrderLocation(@PathVariable Long orderId) {
+        return Result.ok(orderService.getCacheOrderLocation(orderId));
+    }
+
+    @Operation(summary = "计算最佳驾驶线路")
+    @VocmiLogin
+    @PostMapping("/calculateDrivingLine")
+    public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm) {
+        return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
     }
 }
 
