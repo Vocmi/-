@@ -2,14 +2,20 @@ package com.vocmi.daijia.order.client;
 
 import com.vocmi.daijia.common.result.Result;
 import com.vocmi.daijia.model.entity.order.OrderInfo;
+import com.vocmi.daijia.model.form.map.OrderServiceLocationForm;
 import com.vocmi.daijia.model.form.order.OrderInfoForm;
+import com.vocmi.daijia.model.form.order.StartDriveForm;
+import com.vocmi.daijia.model.form.order.UpdateOrderBillForm;
 import com.vocmi.daijia.model.form.order.UpdateOrderCartForm;
+import com.vocmi.daijia.model.vo.base.PageVo;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 
 @FeignClient(value = "service-order")
@@ -78,4 +84,41 @@ public interface OrderInfoFeignClient {
      */
     @PostMapping("/order/info//updateOrderCart")
     Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm);
+
+    /**
+     * 开始代驾服务
+     * @param startDriveForm
+     * @return
+     */
+    @PostMapping("/order/info/startDrive")
+    Result<Boolean> startDrive(@RequestBody StartDriveForm startDriveForm);
+
+    /**
+     *  根据时间段获取订单数
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    @GetMapping("/order/info/getOrderNumByTime/{startTime}/{endTime}")
+    Result<Long> getOrderNumByTime(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime);
+
+    /**
+     * 结束代驾服务更新订单账单
+     * @param updateOrderBillForm
+     * @return
+     */
+    @PostMapping("/order/info/endDrive")
+    Result<Boolean> endDrive(@RequestBody UpdateOrderBillForm updateOrderBillForm);
+
+    /**
+     * 获取乘客订单分页列表
+     * @param customerId
+     * @param page
+     * @param limit
+     * @return
+     */
+    @GetMapping("/order/info/findCustomerOrderPage/{customerId}/{page}/{limit}")
+    Result<PageVo> findCustomerOrderPage(@PathVariable("customerId") Long customerId,
+                                         @PathVariable("page") Long page,
+                                         @PathVariable("limit") Long limit);
 }

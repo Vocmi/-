@@ -1,12 +1,17 @@
 package com.vocmi.daijia.order.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.vocmi.daijia.common.result.Result;
 import com.vocmi.daijia.model.entity.order.OrderInfo;
 import com.vocmi.daijia.model.form.order.OrderInfoForm;
+import com.vocmi.daijia.model.form.order.StartDriveForm;
+import com.vocmi.daijia.model.form.order.UpdateOrderBillForm;
 import com.vocmi.daijia.model.form.order.UpdateOrderCartForm;
+import com.vocmi.daijia.model.vo.base.PageVo;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.vocmi.daijia.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -65,6 +70,40 @@ public class OrderInfoController {
     @PostMapping("/updateOrderCart")
     public Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm) {
         return Result.ok(orderInfoService.updateOrderCart(updateOrderCartForm));
+    }
+
+    @Operation(summary = "开始代驾服务")
+    @PostMapping("/startDrive")
+    public Result<Boolean> startDrive(@RequestBody StartDriveForm startDriveForm) {
+        return Result.ok(orderInfoService.startDrive(startDriveForm));
+    }
+
+    @Operation(summary = "根据时间段获取订单数")
+    @GetMapping("/getOrderNumByTime/{startTime}/{endTime}")
+    public Result<Long> getOrderNumByTime(@PathVariable String startTime, @PathVariable String endTime) {
+        return Result.ok(orderInfoService.getOrderNumByTime(startTime, endTime));
+    }
+
+    @Operation(summary = "结束代驾服务更新订单账单")
+    @PostMapping("/endDrive")
+    public Result<Boolean> endDrive(@RequestBody UpdateOrderBillForm updateOrderBillForm) {
+        return Result.ok(orderInfoService.endDrive(updateOrderBillForm));
+    }
+
+    @Operation(summary = "获取乘客订单分页列表")
+    @GetMapping("/findCustomerOrderPage/{customerId}/{page}/{limit}")
+    public Result<PageVo> findCustomerOrderPage(
+            @Parameter(name = "customerId", description = "乘客id", required = true)
+            @PathVariable Long customerId,
+            @Parameter(name = "page", description = "当前页码", required = true)
+            @PathVariable Long page,
+            @Parameter(name = "limit", description = "每页记录数", required = true)
+            @PathVariable Long limit) {
+        Page<OrderInfo> pageParam = new Page<>(page, limit);
+        PageVo pageVo = orderInfoService.findCustomerOrderPage(pageParam, customerId);
+        pageVo.setPage(page);
+        pageVo.setLimit(limit);
+        return Result.ok(pageVo);
     }
 }
 

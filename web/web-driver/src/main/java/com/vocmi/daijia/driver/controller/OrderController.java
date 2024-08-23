@@ -6,9 +6,12 @@ import com.vocmi.daijia.common.util.AuthContextHolder;
 import com.vocmi.daijia.driver.service.DriverService;
 import com.vocmi.daijia.driver.service.OrderService;
 import com.vocmi.daijia.model.form.map.CalculateDrivingLineForm;
+import com.vocmi.daijia.model.form.order.OrderFeeForm;
+import com.vocmi.daijia.model.form.order.StartDriveForm;
 import com.vocmi.daijia.model.form.order.UpdateOrderCartForm;
 import com.vocmi.daijia.model.vo.driver.DriverInfoVo;
 import com.vocmi.daijia.model.vo.map.DrivingLineVo;
+import com.vocmi.daijia.model.vo.map.OrderServiceLastLocationVo;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.vocmi.daijia.model.vo.order.NewOrderDataVo;
 import com.vocmi.daijia.model.vo.order.OrderInfoVo;
@@ -102,6 +105,24 @@ public class OrderController {
         Long driverId = AuthContextHolder.getUserId();
         updateOrderCartForm.setDriverId(driverId);
         return Result.ok(orderService.updateOrderCart(updateOrderCartForm));
+    }
+
+    @Operation(summary = "开始代驾服务")
+    @VocmiLogin
+    @PostMapping("/startDrive")
+    public Result<Boolean> startDrive(@RequestBody StartDriveForm startDriveForm) {
+        Long driverId = AuthContextHolder.getUserId();
+        startDriveForm.setDriverId(driverId);
+        return Result.ok(orderService.startDrive(startDriveForm));
+    }
+
+    @Operation(summary = "结束代驾服务更新订单账单")
+    @VocmiLogin
+    @PostMapping("/endDrive")
+    public Result<Boolean> endDrive(@RequestBody OrderFeeForm orderFeeForm) {
+        Long driverId = AuthContextHolder.getUserId();
+        orderFeeForm.setDriverId(driverId);
+        return Result.ok(orderService.endDrive(orderFeeForm));
     }
 }
 

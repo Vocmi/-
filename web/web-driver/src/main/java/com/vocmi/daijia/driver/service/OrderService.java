@@ -1,6 +1,8 @@
 package com.vocmi.daijia.driver.service;
 
 import com.vocmi.daijia.model.form.map.CalculateDrivingLineForm;
+import com.vocmi.daijia.model.form.order.OrderFeeForm;
+import com.vocmi.daijia.model.form.order.StartDriveForm;
 import com.vocmi.daijia.model.form.order.UpdateOrderCartForm;
 import com.vocmi.daijia.model.vo.driver.DriverInfoVo;
 import com.vocmi.daijia.model.vo.map.DrivingLineVo;
@@ -30,4 +32,8 @@ public interface OrderService {
     Boolean driverArriveStartLocation(Long orderId, Long driverId);
 
     Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm);
+
+    Boolean startDrive(StartDriveForm startDriveForm);
+
+    Boolean endDrive(OrderFeeForm orderFeeForm);
 }

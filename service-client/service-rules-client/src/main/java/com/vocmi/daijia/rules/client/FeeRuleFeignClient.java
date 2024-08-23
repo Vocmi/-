@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface FeeRuleFeignClient {
     /**
      * 计算订单费用
+     *
      * @param calculateOrderFeeForm
      * @return
      */
     @PostMapping("/rules/fee/calculateOrderFee")
     Result<FeeRuleResponseVo> calculateOrderFee(@RequestBody FeeRuleRequestForm calculateOrderFeeForm);
+
+
 }

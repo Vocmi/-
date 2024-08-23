@@ -9,7 +9,10 @@ import com.qcloud.cos.http.HttpMethodName;
 import com.qcloud.cos.http.HttpProtocol;
 import com.qcloud.cos.model.*;
 import com.qcloud.cos.region.Region;
+import com.vocmi.daijia.common.execption.VocmiException;
+import com.vocmi.daijia.common.result.ResultCodeEnum;
 import com.vocmi.daijia.driver.config.TencentCloudProperties;
+import com.vocmi.daijia.driver.service.CiService;
 import com.vocmi.daijia.driver.service.CosService;
 import com.vocmi.daijia.model.vo.driver.CosUploadVo;
 import io.micrometer.common.util.StringUtils;
@@ -31,6 +34,9 @@ public class CosServiceImpl implements CosService {
 
     @Resource
     private TencentCloudProperties tencentCloudProperties;
+
+    @Resource
+    private CiService ciService;
 
     private COSClient getPrivateCOSClient() {
         COSCredentials cred = new BasicCOSCredentials(tencentCloudProperties.getSecretId(), tencentCloudProperties.getSecretKey());
@@ -59,6 +65,14 @@ public class CosServiceImpl implements CosService {
         PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest); //上传文件
         log.info(JSON.toJSONString(putObjectResult));
         cosClient.shutdown();
+
+        //审核图片
+        Boolean isAuditing = ciService.imageAuditing(uploadPath);
+        if(!isAuditing) {
+            //删除违规图片
+            cosClient.deleteObject(tencentCloudProperties.getBucketPrivate(), uploadPath);
+            throw new VocmiException(ResultCodeEnum.IMAGE_AUDITION_FAIL);
+        }
 
         //封装返回对象
         CosUploadVo cosUploadVo = new CosUploadVo();
