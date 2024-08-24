@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
-        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
-        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
-
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.vocmi.daijia.order.mapper.OrderInfoMapper">
-    <select id="selectCustomerOrderPage" resultType="com.atguigu.daijia.model.vo.order.OrderListVo">
+    <select id="selectCustomerOrderPage" resultType="com.vocmi.daijia.model.vo.order.OrderListVo">
         select info.id,
                info.order_no,
                info.start_location,
@@ -18,6 +17,22 @@
         where info.customer_id = #{customerId}
           and info.is_deleted = 0
         order by info.create_time desc
+    </select>
+
+    <select id="selectDriverOrderPage" resultType="com.vocmi.daijia.model.vo.order.OrderListVo">
+        select
+            id,
+            order_no,
+            start_location,
+            end_location,
+            real_amount as pay_amount,
+            if(status &lt; 7, expect_amount, real_amount) as amount,
+            status,
+            create_time
+        from order_info
+        where driver_id = #{driverId}
+          and is_deleted = 0
+        order by create_time desc
     </select>
 </mapper>
 

@@ -9,6 +9,7 @@ import com.vocmi.daijia.model.form.map.CalculateDrivingLineForm;
 import com.vocmi.daijia.model.form.order.OrderFeeForm;
 import com.vocmi.daijia.model.form.order.StartDriveForm;
 import com.vocmi.daijia.model.form.order.UpdateOrderCartForm;
+import com.vocmi.daijia.model.vo.base.PageVo;
 import com.vocmi.daijia.model.vo.driver.DriverInfoVo;
 import com.vocmi.daijia.model.vo.map.DrivingLineVo;
 import com.vocmi.daijia.model.vo.map.OrderServiceLastLocationVo;
@@ -16,6 +17,7 @@ import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.vocmi.daijia.model.vo.order.NewOrderDataVo;
 import com.vocmi.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -123,6 +125,19 @@ public class OrderController {
         Long driverId = AuthContextHolder.getUserId();
         orderFeeForm.setDriverId(driverId);
         return Result.ok(orderService.endDrive(orderFeeForm));
+    }
+
+    @Operation(summary = "获取司机订单分页列表")
+    @VocmiLogin
+    @GetMapping("findDriverOrderPage/{page}/{limit}")
+    public Result<PageVo> findDriverOrderPage(
+            @Parameter(name = "page", description = "当前页码", required = true)
+            @PathVariable Long page,
+            @Parameter(name = "limit", description = "每页记录数", required = true)
+            @PathVariable Long limit) {
+        Long driverId = AuthContextHolder.getUserId();
+        PageVo pageVo = orderService.findDriverOrderPage(driverId, page, limit);
+        return Result.ok(pageVo);
     }
 }
 
