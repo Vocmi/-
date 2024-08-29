@@ -8,13 +8,15 @@ import com.vocmi.daijia.model.form.order.StartDriveForm;
 import com.vocmi.daijia.model.form.order.UpdateOrderBillForm;
 import com.vocmi.daijia.model.form.order.UpdateOrderCartForm;
 import com.vocmi.daijia.model.vo.base.PageVo;
-import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.vocmi.daijia.model.vo.order.*;
 import com.vocmi.daijia.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @Tag(name = "订单API接口管理")
 @RestController
@@ -122,6 +124,48 @@ public class OrderInfoController {
         pageVo.setPage(page);
         pageVo.setLimit(limit);
         return Result.ok(pageVo);
+    }
+
+    @Operation(summary = "根据订单id获取实际账单信息")
+    @GetMapping("/getOrderBillInfo/{orderId}")
+    public Result<OrderBillVo> getOrderBillInfo(@PathVariable Long orderId) {
+        return Result.ok(orderInfoService.getOrderBillInfo(orderId));
+    }
+
+    @Operation(summary = "根据订单id获取实际分账信息")
+    @GetMapping("/getOrderProfitsharing/{orderId}")
+    public Result<OrderProfitsharingVo> getOrderProfitsharing(@PathVariable Long orderId) {
+        return Result.ok(orderInfoService.getOrderProfitsharing(orderId));
+    }
+
+    @Operation(summary = "发送账单信息")
+    @GetMapping("/sendOrderBillInfo/{orderId}/{driverId}")
+    Result<Boolean> sendOrderBillInfo(@PathVariable Long orderId, @PathVariable Long driverId) {
+        return Result.ok(orderInfoService.sendOrderBillInfo(orderId, driverId));
+    }
+
+    @Operation(summary = "获取订单支付信息")
+    @GetMapping("/getOrderPayVo/{orderNo}/{customerId}")
+    public Result<OrderPayVo> getOrderPayVo(@PathVariable String orderNo, @PathVariable Long customerId) {
+        return Result.ok(orderInfoService.getOrderPayVo(orderNo, customerId));
+    }
+
+    @Operation(summary = "更改订单支付状态")
+    @GetMapping("/updateOrderPayStatus/{orderNo}")
+    public Result<Boolean> updateOrderPayStatus(@PathVariable String orderNo) {
+        return Result.ok(orderInfoService.updateOrderPayStatus(orderNo));
+    }
+
+    @Operation(summary = "获取订单的系统奖励")
+    @GetMapping("/getOrderRewardFee/{orderNo}")
+    public Result<OrderRewardVo> getOrderRewardFee(@PathVariable String orderNo) {
+        return Result.ok(orderInfoService.getOrderRewardFee(orderNo));
+    }
+
+    @Operation(summary = "更新订单优惠券金额")
+    @GetMapping("/updateCouponAmount/{orderId}/{couponAmount}")
+    public Result<Boolean> updateCouponAmount(@PathVariable Long orderId, @PathVariable BigDecimal couponAmount) {
+        return Result.ok(orderInfoService.updateCouponAmount(orderId, couponAmount));
     }
 }
 

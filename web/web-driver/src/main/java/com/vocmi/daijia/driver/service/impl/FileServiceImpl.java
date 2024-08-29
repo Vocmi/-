@@ -59,6 +59,7 @@ public class FileServiceImpl implements FileService {
             return minioProperties.getEndpointUrl() + "/" + minioProperties.getBucketName() + "/" + fileName ;
 
         } catch (Exception e) {
+           e.printStackTrace();
             throw new VocmiException(ResultCodeEnum.FILE_ERROR);
         }
     }

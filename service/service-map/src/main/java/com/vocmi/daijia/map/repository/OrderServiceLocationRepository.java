@@ -1,5 +1,6 @@
 package com.vocmi.daijia.map.repository;
 
+
 import com.vocmi.daijia.model.entity.map.OrderServiceLocation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;

@@ -7,6 +7,7 @@ import com.vocmi.daijia.customer.service.OrderService;
 import com.vocmi.daijia.model.form.customer.ExpectOrderForm;
 import com.vocmi.daijia.model.form.customer.SubmitOrderForm;
 import com.vocmi.daijia.model.form.map.CalculateDrivingLineForm;
+import com.vocmi.daijia.model.form.payment.CreateWxPaymentForm;
 import com.vocmi.daijia.model.vo.base.PageVo;
 import com.vocmi.daijia.model.vo.customer.ExpectOrderVo;
 import com.vocmi.daijia.model.vo.driver.DriverInfoVo;
@@ -15,12 +16,15 @@ import com.vocmi.daijia.model.vo.map.OrderLocationVo;
 import com.vocmi.daijia.model.vo.map.OrderServiceLastLocationVo;
 import com.vocmi.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.vocmi.daijia.model.vo.order.OrderInfoVo;
+import com.vocmi.daijia.model.vo.payment.WxPrepayVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @Slf4j
 @Tag(name = "订单API接口管理")
@@ -110,6 +114,22 @@ public class OrderController {
         Long customerId = AuthContextHolder.getUserId();
         PageVo pageVo = orderService.findCustomerOrderPage(customerId, page, limit);
         return Result.ok(pageVo);
+    }
+
+    @Operation(summary = "创建微信支付")
+    @VocmiLogin
+    @PostMapping("/createWxPayment")
+    public Result<WxPrepayVo> createWxPayment(@RequestBody CreateWxPaymentForm createWxPaymentForm) {
+        Long customerId = AuthContextHolder.getUserId();
+        createWxPaymentForm.setCustomerId(customerId);
+        return Result.ok(orderService.createWxPayment(createWxPaymentForm));
+    }
+
+    @Operation(summary = "支付状态查询")
+    @VocmiLogin
+    @GetMapping("/queryPayStatus/{orderNo}")
+    public Result<Boolean> queryPayStatus(@PathVariable String orderNo) {
+        return Result.ok(orderService.queryPayStatus(orderNo));
     }
 }
 
